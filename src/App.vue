@@ -26,10 +26,24 @@
         <!-- ActivityCreate -->
 
         <div class="column is-9">
-          <div class="box content">
-            <ActivityItem v-for="activity in activities" :key="activity.id" :activity="activity" />
-            <div class="activity-length">Currently {{ activityLength }} activities</div>
-            <div class="activity-motivation">{{ activityMotivation }}</div>
+          <div class="box content" :class="{fetching:isFetching, 'has-error': error}">
+            <div v-if="error">{{ error }}</div>
+            <div v-else>
+              <div v-if="isFetching">Loading...</div>
+              <div v-else>
+                <ActivityItem
+                  v-for="activity in activities"
+                  :key="activity.id"
+                  :activity="activity"
+                />
+              </div>
+            </div>
+            <div v-if="!isFetching">
+              <div v-if="!error">
+                <div class="activity-length">Currently {{ activityLength }} activities</div>
+                <div class="activity-motivation">{{ activityMotivation }}</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -53,7 +67,8 @@ export default {
       appName: "Activity planner",
       watchedAppName: "Activity Planner",
 
-      items: { 1: { name: "Famous" }, 2: { name: "Oke" } },
+      isFetching: false,
+      error: null,
       user: {},
 
       activities: {},
@@ -82,9 +97,16 @@ export default {
   },
 
   created() {
-    fetchActivities().then(activities => {
-      this.activities = activities;
-    });
+    this.isFetching = true;
+    fetchActivities()
+      .then(activities => {
+        this.activities = activities;
+        this.isFetching = false;
+      })
+      .catch(err => {
+        this.error = err;
+        this.isFetching = false;
+      });
     this.user = fetchUser();
     this.categories = fetchCategories();
   },
@@ -130,6 +152,13 @@ footer {
 }
 .navbar-menu .navbar-item {
   padding: 0 2rem;
+}
+
+.fetching {
+  border: 1px solid orange;
+}
+.has-error {
+  border: 1px solid red;
 }
 aside.menu {
   padding-top: 3rem;

@@ -25,7 +25,7 @@
         <div class="field">
           <label class="label">Category</label>
           <div class="control">
-            <select v-model="newActivity.category" class="select">
+            <select v-model="newActivity.cateogry" class="select">
               <option default disabled value>Please Select One</option>
               <option v-for="cateogry in categories" :key="cateogry.id">{{ cateogry.text }}</option>
             </select>
@@ -70,7 +70,11 @@ export default {
 
   computed: {
     isFormValid() {
-      return this.newActivity.title && this.newActivity.notes;
+      return (
+        this.newActivity.title &&
+        this.newActivity.notes &&
+        this.newActivity.cateogry
+      );
     }
   },
   methods: {
@@ -78,9 +82,16 @@ export default {
       this.isFormDisplay = !this.isFormDisplay;
     },
     createActivity() {
-      createActivityAPI(this.newActivity).then(activity => {
+      createActivityAPI({ ...this.newActivity }).then(activity => {
+        this.resetForm();
         this.$emit("activityCreate", { ...activity });
       });
+    },
+    resetForm() {
+      this.newActivity.title = "";
+      this.newActivity.notes = "";
+      this.newActivity.cateogry = "";
+      this.isFormDisplay = false;
     }
   }
 };
