@@ -1,10 +1,15 @@
 <template>
   <article class="post">
-    <h4>{{ activity.title }}</h4>
+    <div class="activity-title-wrapper">
+      <h4 class="title">{{ activity.title }}</h4>
+      <i class="fas fa-cog activity-settings"></i>
+    </div>
+    <p class="category">{{ textCapitalize(categories[activity.category].text) }}</p>
+    <p>{{ activity.notes }}</p>
     <div class="media">
       <div class="media-left">
         <p class="image is-32x32">
-          <img src="../assets/user.png">
+          <img src="../assets/user.png" />
         </p>
       </div>
       <div class="media-content">
@@ -12,27 +17,66 @@
           <p>
             <a href="#">Filip Jerga</a>
             updated
-            {{ activity.updatedAt }} minutes ago &nbsp;
+            {{ activity.updatedAt | prettyTime }} &nbsp;
           </p>
         </div>
       </div>
       <div class="media-right">
-        <span>Progress Bar Here</span>
+        <span>
+          Progress
+          <span :class="'color-'+progressColor">{{ activity.progress }} %</span>
+        </span>
       </div>
     </div>
   </article>
 </template>
 
 <script>
+import textUtility from "../mixins/textUtility";
 export default {
+  mixins: [textUtility],
   props: {
+    categories: {
+      type: Object,
+      required: true
+    },
     activity: {
       type: Object,
       required: true
+    }
+  },
+  computed: {
+    progressColor() {
+      const progress = this.activity.progress;
+      if (progress <= 0) {
+        return "red";
+      } else if (progress <= 50) {
+        return "orange";
+      } else {
+        return "green";
+      }
     }
   }
 };
 </script>
 
 <style scoped>
+.color-red {
+  color: red;
+}
+.color-green {
+  color: green;
+}
+
+.color-orange {
+  color: orange;
+}
+
+.title {
+  margin-bottom: 2px;
+}
+.category {
+  font-style: italic;
+  font-size: 17px;
+}
 </style>

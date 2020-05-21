@@ -1,23 +1,8 @@
 <template>
-  <div id="activityApp">
-    <nav class="navbar is-white topNav">
-      <div class="container">
-        <div class="navbar-brand">
-          <h1>{{ appFullName }}</h1>
-        </div>
-      </div>
-    </nav>
-    <nav class="navbar is-white">
-      <div class="container">
-        <div class="navbar-menu">
-          <div class="navbar-start">
-            <a class="navbar-item is-active" href="#">Newest</a>
-            <a class="navbar-item" href="#">In Progress</a>
-            <a class="navbar-item" href="#">Finished</a>
-          </div>
-        </div>
-      </div>
-    </nav>
+  <div v-if="isLoaded" id="activityApp">
+    <!-- navbar -->
+    <TheNavbar :fullname="appFullName" />
+    <!-- navbar end -->
     <section class="container">
       <div class="columns">
         <!-- ActivityCreate -->
@@ -35,6 +20,7 @@
                   v-for="activity in activities"
                   :key="activity.id"
                   :activity="activity"
+                  :categories="categories"
                 />
               </div>
             </div>
@@ -55,10 +41,11 @@
 import Vue from "vue";
 import ActivityItem from "./components/ActivityItem";
 import ActivityCreate from "./components/ActivityCreate";
+import TheNavbar from "./components/TheNavbar";
 import { fetchActivities, fetchCategories, fetchUser } from "./api";
 export default {
   name: "App",
-  components: { ActivityItem, ActivityCreate },
+  components: { ActivityItem, ActivityCreate, TheNavbar },
   data() {
     return {
       message: "Hello Vue!",
@@ -71,8 +58,8 @@ export default {
       error: null,
       user: {},
 
-      activities: {},
-      categories: {}
+      activities: null,
+      categories: null
     };
   },
 
@@ -93,6 +80,9 @@ export default {
       } else {
         return "No Activites";
       }
+    },
+    isLoaded() {
+      return this.activities && this.categories;
     }
   },
 
@@ -108,7 +98,9 @@ export default {
         this.isFetching = false;
       });
     this.user = fetchUser();
-    this.categories = fetchCategories();
+    fetchCategories().then(categories => {
+      this.categories = categories;
+    });
   },
 
   methods: {
