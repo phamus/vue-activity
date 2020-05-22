@@ -10,6 +10,9 @@ export const fetchCategories = () => {
   return fakeApi.get('categories', { force: 1 });
 };
 
+export const deleteActivityAPI = (activity) => {
+  return fakeApi.delete("activities", activity)
+}
 
 
 export const fetchUser = () => {

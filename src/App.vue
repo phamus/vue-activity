@@ -21,6 +21,7 @@
                   :key="activity.id"
                   :activity="activity"
                   :categories="categories"
+                  @activityDeleted="handleActivityDelete"
                 />
               </div>
             </div>
@@ -42,7 +43,12 @@ import Vue from "vue";
 import ActivityItem from "./components/ActivityItem";
 import ActivityCreate from "./components/ActivityCreate";
 import TheNavbar from "./components/TheNavbar";
-import { fetchActivities, fetchCategories, fetchUser } from "./api";
+import {
+  fetchActivities,
+  fetchCategories,
+  fetchUser,
+  deleteActivityAPI
+} from "./api";
 export default {
   name: "App",
   components: { ActivityItem, ActivityCreate, TheNavbar },
@@ -106,7 +112,11 @@ export default {
   methods: {
     addActivity(newActivity) {
       Vue.set(this.activities, newActivity.id, newActivity);
-      console.log(newActivity);
+    },
+    handleActivityDelete(activity) {
+      deleteActivityAPI(activity).then(deletedActivity => {
+        Vue.delete(this.activities, deletedActivity.id);
+      });
     }
   }
 };

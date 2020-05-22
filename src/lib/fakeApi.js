@@ -1,7 +1,7 @@
 const data = {
   activities: {
     "1546968934": {
-      id: "123456987654",
+      id: "1546968934",
       title: "Learn Vue.js",
       notes: "I started today and it was not good.",
       progress: 0,
@@ -10,7 +10,7 @@ const data = {
       updatedAt: 1546969144391
     },
     "1546969212": {
-      id: "2wdf-0oih",
+      id: "1546969212",
       title: "Read Witcher Books",
       notes: "These books are super nice",
       progress: 50,
@@ -19,7 +19,7 @@ const data = {
       updatedAt: 1546969144391
     },
     "1546964319": {
-      id: "2wdf-0oivh",
+      id: "1546964319",
       title: "Read Witcher Books",
       notes: "These books are super nice",
       progress: 100,
@@ -63,6 +63,14 @@ class FakeApi {
   post(resource, item) {
     return new Promise((resolve, reject) => {
       data[resource][item.id] = item
+      resolve(item)
+    })
+  }
+
+  delete(resource, item) {
+    console.log(item)
+    return new Promise((resolve, reject) => {
+      delete data[resource][item.id]
       resolve(item)
     })
   }
